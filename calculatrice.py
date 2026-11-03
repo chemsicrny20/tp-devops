@@ -14,7 +14,11 @@ def division(a, b):
         return "Erreur : division par zéro"
     return a / b
     
-if __name__ == "_main_":
+def division(a, b):
+    if b == 0:
+        return "Erreur : division par zéro"
+    return a / b
+if __name__ == "__main__":
     operation = sys.argv[1]
     a = float(sys.argv[2])
     b = float(sys.argv[3])
@@ -25,5 +29,9 @@ if __name__ == "_main_":
         print(soustraction(a, b))
     elif operation == "multiplication":
         print(multiplication(a, b))
+    elif operation == "division":
+        print(division(a, b))
+    elif operation == "division":
+        print(division(a, b))
     else:
         print("Opération inconnue :", operation)
