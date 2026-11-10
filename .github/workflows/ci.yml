@@ -17,3 +17,30 @@ jobs:
 
       - run: pip install pytest
       - run: pytest
+
+  build:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Préparer le nom de l’image
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - name: Construire l’image Docker
+        run: docker build -t "$IMAGE:${{ github.sha }}" .
+
+      - name: Se connecter à GHCR
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          printf '%s\n' "$GHCR_TOKEN" | docker login ghcr.io \
+            -u "${{ github.actor }}" --password-stdin
+
+      - name: Publier l’image Docker
+        run: docker push "$IMAGE:${{ github.sha }}"
